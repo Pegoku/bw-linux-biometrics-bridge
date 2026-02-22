@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use std::process::Command;
+use std::process::Stdio;
 use std::sync::Arc;
 
 use aes::Aes256;
@@ -147,6 +148,12 @@ impl Daemon {
     }
 
     async fn handle_native_message(&self, payload: Value) -> Result<Value> {
+        let subject_pid = payload
+            .get("hostPid")
+            .and_then(Value::as_u64)
+            .and_then(|v| u32::try_from(v).ok())
+            .unwrap_or_else(std::process::id);
+
         let app_id = payload
             .get("appId")
             .and_then(Value::as_str)
@@ -222,7 +229,7 @@ impl Daemon {
             "authenticateWithBiometrics" => json!({
                 "command": command,
                 "messageId": msg_id,
-                "response": polkit_authenticate(),
+                "response": polkit_authenticate(subject_pid),
                 "timestamp": now_ms(),
             }),
             "getBiometricsStatus" => json!({
@@ -279,7 +286,7 @@ impl Daemon {
                     return wrap_native_response(&app_id, msg_id, payload, &session.key64);
                 };
 
-                let granted = polkit_authenticate();
+                let granted = polkit_authenticate(subject_pid);
                 if granted {
                     json!({
                         "command": command,
@@ -441,17 +448,19 @@ fn polkit_action_exists() -> bool {
 
     Command::new("pkaction")
         .args(["--action-id", POLICY_ACTION])
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
         .status()
         .map(|s| s.success())
         .unwrap_or(false)
 }
 
-fn polkit_authenticate() -> bool {
+fn polkit_authenticate(subject_pid: u32) -> bool {
     if !command_exists("pkcheck") {
         return false;
     }
 
-    let pid = std::process::id().to_string();
+    let pid = subject_pid.to_string();
     Command::new("pkcheck")
         .args([
             "--action-id",
@@ -460,6 +469,8 @@ fn polkit_authenticate() -> bool {
             &pid,
             "--allow-user-interaction",
         ])
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
         .status()
         .map(|s| s.success())
         .unwrap_or(false)

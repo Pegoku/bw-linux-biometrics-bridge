@@ -68,7 +68,12 @@ async fn main() -> Result<()> {
     write_native_frame(&mut stdout, &json!({ "command": "connected" }))?;
 
     while let Some(message) = read_native_frame(&mut stdin)? {
-        let response = send_request(&mut framed, HostRequest::NativeMessage { payload: message }).await?;
+        let mut payload = message;
+        if let Some(obj) = payload.as_object_mut() {
+            obj.insert("hostPid".to_string(), json!(std::process::id()));
+        }
+
+        let response = send_request(&mut framed, HostRequest::NativeMessage { payload }).await?;
 
         match response {
             HostResponse::NativeMessage { payload } => write_native_frame(&mut stdout, &payload)?,
