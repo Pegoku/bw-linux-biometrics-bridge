@@ -35,6 +35,10 @@ Or run the installer script (build + install + systemd + manifests + polkit):
 ./scripts/install-linux.sh
 ```
 
+The installer follows Arch/AUR-style system paths by default (`/usr/bin`,
+`/usr/lib/systemd/user`, `/usr/lib/mozilla/native-messaging-hosts`, `/etc/...`) and prompts
+for browser manifest targets. Default browser target is Firefox.
+
 2. Start daemon:
 
 ```bash
