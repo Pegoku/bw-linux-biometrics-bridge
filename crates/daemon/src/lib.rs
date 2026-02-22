@@ -61,6 +61,15 @@ impl Daemon {
         let listener = UnixListener::bind(socket_path)
             .with_context(|| format!("failed to bind socket {}", self.socket_path))?;
 
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+
+            let perms = std::fs::Permissions::from_mode(0o600);
+            std::fs::set_permissions(socket_path, perms)
+                .with_context(|| format!("failed to set socket permissions on {}", self.socket_path))?;
+        }
+
         info!(socket = %self.socket_path, "daemon listening");
 
         loop {
@@ -234,6 +243,27 @@ impl Daemon {
                     "command": command,
                     "messageId": msg_id,
                     "response": status as i32,
+                    "timestamp": now_ms(),
+                })
+            }
+            "setupBiometricsForUser" => {
+                let user_key_b64 = decrypted
+                    .get("userKeyB64")
+                    .and_then(Value::as_str)
+                    .unwrap_or_default();
+
+                let enrolled = match STANDARD.decode(user_key_b64.as_bytes()) {
+                    Ok(user_key) if !user_key.is_empty() => {
+                        self.state.lock().await.user_keys.insert(user_id.clone(), user_key);
+                        true
+                    }
+                    _ => false,
+                };
+
+                json!({
+                    "command": command,
+                    "messageId": msg_id,
+                    "response": enrolled,
                     "timestamp": now_ms(),
                 })
             }

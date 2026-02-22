@@ -222,6 +222,15 @@ else
 fi
 
 echo "[6/6] Verifying daemon health..."
+for _ in {1..20}; do
+  if [[ -S "${SOCKET_PATH}" ]]; then
+    if "${BIN_DIR}/bwctl" --socket "${SOCKET_PATH}" health >/dev/null 2>&1; then
+      break
+    fi
+  fi
+  sleep 0.25
+done
+
 "${BIN_DIR}/bwctl" --socket "${SOCKET_PATH}" health
 
 echo

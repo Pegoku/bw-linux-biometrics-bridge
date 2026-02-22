@@ -1,7 +1,6 @@
 # bw-daemon (Linux biometrics bridge)
 
-This folder contains a Linux-first daemon + CLI + browser native host that can bridge
-browser extension native messaging requests to local system authentication.
+This folder contains a Linux-first daemon + CLI + browser native host that can bridge browser extension native messaging requests to local system authentication.
 
 ## Binaries
 
@@ -16,10 +15,11 @@ browser extension native messaging requests to local system authentication.
 - Linux system auth via `pkcheck` and a Polkit action (`com.bitwarden.Bitwarden.unlock`)
 - In-memory per-user unlock key cache (daemon lifetime)
 
-## Important limitation
+## Setup behavior
 
-The browser extension only asks for unlock keys; it does not currently provision keys to a
-standalone daemon. For now, key enrollment is done with `bwctl enroll`.
+When used with the browser extension code in this repository, enabling biometrics performs an enrollment step automatically via native messaging (`setupBiometricsForUser`).
+
+`bwctl enroll` remains available for manual troubleshooting.
 
 ## Quick start
 
