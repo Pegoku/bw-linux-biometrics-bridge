@@ -4,6 +4,6 @@
   "path": "__NATIVE_HOST_PATH__",
   "type": "stdio",
   "allowed_extensions": [
-    "{446900e4-71c2-419f-a6a7-df9c091e268b}"
+    "__FIREFOX_EXTENSION_ID__"
   ]
 }

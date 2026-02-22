@@ -14,7 +14,7 @@ EDGE_MANIFEST_DEST="/etc/opt/edge/native-messaging-hosts/com.8bit.bitwarden.json
 
 usage() {
   cat <<'EOF'
-Usage: scripts/install-linux.sh [--no-build] [--bin-dir PATH] [--no-polkit] [--browsers LIST]
+Usage: scripts/install-linux.sh [--no-build] [--bin-dir PATH] [--no-polkit] [--browsers LIST] [--firefox-extension-id ID]
 
 Installs:
 - bw-daemond, bw-native-host, bwctl into /usr/bin (or --bin-dir)
@@ -25,12 +25,16 @@ Installs:
 Browser list format:
 - --browsers firefox
 - --browsers firefox,chromium,chrome,edge
+
+Firefox example:
+- --firefox-extension-id bitwarden-d-fork@pegoku.local
 EOF
 }
 
 DO_BUILD=1
 DO_POLKIT=1
 BROWSER_LIST=""
+FIREFOX_EXTENSION_ID="{5d11d186-9b66-4f59-9b5a-670d320f920e}"
 
 install_file() {
   local src="$1"
@@ -108,6 +112,10 @@ while [[ $# -gt 0 ]]; do
       BROWSER_LIST="$2"
       shift 2
       ;;
+    --firefox-extension-id)
+      FIREFOX_EXTENSION_ID="$2"
+      shift 2
+      ;;
     -h|--help)
       usage
       exit 0
@@ -148,7 +156,10 @@ NATIVE_HOST_PATH="${BIN_DIR}/bw-native-host"
 for browser in "${BROWSERS[@]}"; do
   case "${browser}" in
     firefox)
-      content="$(sed "s|__NATIVE_HOST_PATH__|${NATIVE_HOST_PATH}|g" "${FIREFOX_TEMPLATE}")"
+      content="$(sed \
+        -e "s|__NATIVE_HOST_PATH__|${NATIVE_HOST_PATH}|g" \
+        -e "s|__FIREFOX_EXTENSION_ID__|${FIREFOX_EXTENSION_ID}|g" \
+        "${FIREFOX_TEMPLATE}")"
       if [[ -w "$(dirname "${FIREFOX_MANIFEST_DEST}")" ]]; then
         mkdir -p "$(dirname "${FIREFOX_MANIFEST_DEST}")"
       else
@@ -240,3 +251,4 @@ echo "- Native host path: ${NATIVE_HOST_PATH}"
 echo "- Socket path: ${SOCKET_PATH}"
 echo "- Service: bw-daemond.service (enabled + started)"
 echo "- Browsers: ${BROWSERS[*]}"
+echo "- Firefox extension id: ${FIREFOX_EXTENSION_ID}"

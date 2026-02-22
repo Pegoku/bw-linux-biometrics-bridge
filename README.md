@@ -35,6 +35,12 @@ Or run the installer script (build + install + systemd + manifests + polkit):
 ./scripts/install-linux.sh
 ```
 
+For Firefox forks, pass your add-on ID so native messaging allowlist matches:
+
+```bash
+./scripts/install-linux.sh --browsers firefox --firefox-extension-id "{5d11d186-9b66-4f59-9b5a-670d320f920e}"
+```
+
 2. Start daemon:
 
 ```bash
