@@ -29,6 +29,12 @@ standalone daemon. For now, key enrollment is done with `bwctl enroll`.
 cargo build --release
 ```
 
+Or run the installer script (build + install + systemd + manifests + polkit):
+
+```bash
+./scripts/install-linux.sh
+```
+
 2. Start daemon:
 
 ```bash
