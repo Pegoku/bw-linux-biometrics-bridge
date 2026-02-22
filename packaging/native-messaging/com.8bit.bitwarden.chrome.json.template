@@ -1,0 +1,12 @@
+{
+  "name": "com.8bit.bitwarden",
+  "description": "Bitwarden browser <-> daemon bridge",
+  "path": "__NATIVE_HOST_PATH__",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://nngceckbapebfimnlniiiahkandclblb/",
+    "chrome-extension://hccnnhgbibccigepcmlgppchkpfdophk/",
+    "chrome-extension://jbkfoedolllekgbhcbcoahefnbanhhlh/",
+    "chrome-extension://ccnckbpmaceehanjmeomladnmlffdjgn/"
+  ]
+}

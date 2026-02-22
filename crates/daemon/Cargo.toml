@@ -1,0 +1,34 @@
+[package]
+name = "bw-daemon"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "bw-daemond"
+path = "src/bin/bw-daemond.rs"
+
+[[bin]]
+name = "bwctl"
+path = "src/bin/bwctl.rs"
+
+[dependencies]
+anyhow.workspace = true
+base64.workspace = true
+clap.workspace = true
+futures.workspace = true
+rand.workspace = true
+rsa.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha1.workspace = true
+sha2.workspace = true
+hmac.workspace = true
+aes.workspace = true
+cbc.workspace = true
+tokio.workspace = true
+tokio-util.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+protocol.workspace = true
