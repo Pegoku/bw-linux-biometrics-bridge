@@ -17,7 +17,7 @@ This folder contains a Linux-first daemon + CLI + browser native host that can b
 
 ## Setup behavior
 
-When used with the browser extension code in this repository, enabling biometrics performs an enrollment step automatically via native messaging (`setupBiometricsForUser`).
+When used with the browser extension code in this repository, enabling biometrics performs an enrollment step automatically via native messaging (`setupBiometricsForUser`) using the modified browser extension in [my fork](https://github.com/Pegoku/clients).
 
 `bwctl enroll` remains available for manual troubleshooting.
 
@@ -34,10 +34,6 @@ Or run the installer script (build + install + systemd + manifests + polkit):
 ```bash
 ./scripts/install-linux.sh
 ```
-
-The installer follows Arch/AUR-style system paths by default (`/usr/bin`,
-`/usr/lib/systemd/user`, `/usr/lib/mozilla/native-messaging-hosts`, `/etc/...`) and prompts
-for browser manifest targets. Default browser target is Firefox.
 
 2. Start daemon:
 
